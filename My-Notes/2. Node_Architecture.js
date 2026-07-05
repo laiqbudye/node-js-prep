@@ -62,4 +62,57 @@ Timer
     
     Think of libuv as the engine that powers Node's asynchronous behavior.
 
-  
+
+--------------------------------------------------------------------------------------------
+
+What is a Thread Pool?
+    Node.js executes JS on one main thread.
+    
+    But operations like,
+            1. Reading files
+            2. Writing files
+            3. Password hashing
+            4. Compression
+
+    can use libuv's thread pool.
+
+    Default size: 4 Threads
+    It can be increased using the UV_THREADPOOL_SIZE environment variable (up to a platform-dependent limit).
+
+                
+--------------------------------------------------------------------------------------------
+
+Microtask Queue
+Microtasks have higher priority than the regular Callback Queue.
+
+Includes:
+Promise callbacks (.then, .catch, .finally)
+queueMicrotask()
+
+In Node.js, process.nextTick() has its own special queue that is processed even before the regular microtask queue.
+
+
+--------------------------------------------------------------------------------------------
+
+process.nextTick()
+            Highest priority in Node.js.
+
+Example:
+console.log("Start");
+
+process.nextTick(() => {
+    console.log("nextTick");
+});
+
+console.log("End");
+
+Output:
+Start
+End
+nextTick
+
+--------------------------------------------------------------------------------------------
+
+Why is Node.js called Single-Threaded?
+JavaScript code executes on a single main thread. 
+Asynchronous work is coordinated by libuv, allowing Node.js to handle many operations concurrently without creating a JavaScript thread for each request.
