@@ -166,5 +166,55 @@ What are common uses of middleware?
     Error handling
     Rate limiting
 
+---------------------------------------------------------------------------------------
 
-      
+If I apply authentication middleware using app.use, it will be performed for all the requests, but let's say I have 2 routes on which I don't want to perform authentication; then how should it work
+
+Option 1 (Most Common) - Apply Middleware Only to Protected Routes ✅
+
+// Public routes
+app.get("/", (req, res) => {
+    res.send("Home");
+});
+
+app.post("/login", (req, res) => {
+    res.send("Login");
+});
+
+// Protected routes
+app.get("/profile", auth, (req, res) => {
+    res.send("Profile");
+});
+
+
+Option 2 - Apply Middleware After Public Routes (Very Common)
+
+app.get("/", (req, res) => {
+    res.send("Home");
+});
+
+app.post("/login", (req, res) => {
+    res.send("Login");
+});
+
+// Everything below this line requires authentication
+app.use(auth);
+
+app.get("/profile", (req, res) => {
+    res.send("Profile");
+});
+
+
+
+Option 3 - Use Express Router (Production Best Practice)
+
+routes/
+    publicRoutes.js
+    userRoutes.js
+
+
+const publicRoutes = require("./routes/publicRoutes");
+const userRoutes = require("./routes/userRoutes");
+
+app.use("/", publicRoutes);        // Public
+app.use("/api", auth, userRoutes); // Protected
